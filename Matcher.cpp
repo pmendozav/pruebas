@@ -441,11 +441,14 @@ void Matcher::DrawMatches(const std::vector < std::pair<int, int>> &matches)
 
 void Matcher::Debug(std::string str)
 {
+	Stopwatch timer;
 	FindMatches();
 	//FindMatchesInv();
 
 	RemoveAllOutliers();
 	//RemoveAllOutliersInv();
+
+	timer.toc("total time: ");
 
 	const int n_superpixels = sp_from.n_superpixels;
 	std::vector<int> rn;
@@ -459,6 +462,11 @@ void Matcher::Debug(std::string str)
 		{
 			rn.push_back(i);
 		}
+
+		//if (71 < pt1.x && pt1.x < 538 && 70 < pt1.y && pt1.y < 411)
+		//{
+		//	rn.push_back(i);
+		//}
 	}
 	
 	cv::Mat img1 = DrawAllMatches(rn);

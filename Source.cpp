@@ -24,6 +24,9 @@ int main()
 
 	cv::Mat img1 = cv::imread("./IMG/test2/83x.bmp");
 	cv::Mat img2 = cv::imread("./IMG/test2/1811.bmp");
+	//cv::Mat img1 = cv::imread("./IMG/test3/141.bmp");
+	//cv::Mat img2 = cv::imread("./IMG/test3/249.bmp");
+
 
 	cvtColor(img1, img1, CV_BGR2Lab);
 	cvtColor(img2, img2, CV_BGR2Lab);
