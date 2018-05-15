@@ -22,7 +22,7 @@ int main()
 	Superpixel sp1, sp2;
 	Matcher matcher;
 
-	cv::Mat img1 = cv::imread("./IMG/test2/1799.bmp");
+	cv::Mat img1 = cv::imread("./IMG/test2/83x.bmp");
 	cv::Mat img2 = cv::imread("./IMG/test2/1811.bmp");
 
 	cvtColor(img1, img1, CV_BGR2Lab);
@@ -37,25 +37,4 @@ int main()
 	matcher.Set(sp1, sp2);
 
 	matcher.Debug();
-
-	//cv::Ptr<cv::xfeatures2d::DAISY> daisy =
-	//	cv::xfeatures2d::DAISY::create(5, 3, 4, 8,
-	//		cv::xfeatures2d::DAISY::NRM_FULL, cv::noArray(), false, false);
-
-	//cv::Mat outFeatures;
-	//daisy->compute(img, outFeatures);
-
-	//std::cout << img.size() << std::endl;
-	//std::cout << outFeatures.size() << std::endl;
-	//std::cout << outFeatures.depth() << std::endl;
-
-	//cv::Mat img2 = cv::imread("C:\\Users\\Public\\Pictures\\Sample Pictures\\Desert.jpg", cv::IMREAD_GRAYSCALE);
-
-	//cv::Mat outFeatures2;
-	//daisy->compute(img, outFeatures2);
-
-	//std::cout << img2.size() << std::endl;
-	//std::cout << outFeatures2.size() << std::endl;
-	//std::cout << outFeatures2.depth() << std::endl;
-
 }

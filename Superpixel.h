@@ -18,6 +18,7 @@ struct SP
 	int correspondence_id;
 	float best_cost;
 	cv::Point2i displacement;
+	bool valid_disp;
 };
 
 class Superpixel
