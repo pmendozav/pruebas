@@ -20,7 +20,7 @@ struct SP
 	cv::Point2i displacement;
 };
 
-class Superpixel2
+class Superpixel
 {
 private:
 	friend class Matcher;
@@ -37,8 +37,8 @@ private:
 protected:
 	inline void SetMeanDP();
 public:
-	Superpixel2();
-	~Superpixel2();
+	Superpixel();
+	~Superpixel();
 
 	void Set(Descriptor &_dp);
 	cv::Mat Debug(std::string str = "");

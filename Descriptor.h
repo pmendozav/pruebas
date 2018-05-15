@@ -13,7 +13,7 @@ enum DESCRIPTOR_TYPE {DAISY};
 class Descriptor
 {
 private:
-	friend class Superpixel2;
+	friend class Superpixel;
 	friend class Matcher;
 
 	cv::Mat img;

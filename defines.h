@@ -1,5 +1,7 @@
 #pragma once
 
+#define DEFINES
+
 #ifndef DEFINES
 #define DEFINES
 

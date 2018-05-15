@@ -1,11 +1,11 @@
 #pragma once
-#include "Superpixel2.h"
+#include "Superpixel.h"
 
 class Matcher
 {
 private:
-	Superpixel2 sp_from;
-	Superpixel2 sp_to;
+	Superpixel sp_from;
+	Superpixel sp_to;
 
 	//std::vector < std::pair<int, int>> matches;
 
@@ -24,7 +24,7 @@ public:
 	Matcher();
 	~Matcher();
 
-	void Set(Superpixel2 &sp_from, Superpixel2 &sp_to);
+	void Set(Superpixel &sp_from, Superpixel &sp_to);
 
 	void FindOneMatch(const int &id_from,
 		int &id_to,

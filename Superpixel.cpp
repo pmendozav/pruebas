@@ -1,17 +1,17 @@
-#include "Superpixel2.h"
+#include "Superpixel.h"
 #include <array>
 #include "utils.h"
 
-Superpixel2::Superpixel2()
+Superpixel::Superpixel()
 {
 }
 
 
-Superpixel2::~Superpixel2()
+Superpixel::~Superpixel()
 {
 }
 
-void Superpixel2::Set(Descriptor &dp)
+void Superpixel::Set(Descriptor &dp)
 {
 	this->dp = dp;
 
@@ -43,7 +43,7 @@ void Superpixel2::Set(Descriptor &dp)
 	SetMeanDP();
 }
 
-inline void Superpixel2::SetMeanDP()
+inline void Superpixel::SetMeanDP()
 {
 	sp_info.resize(n_superpixels);
 
@@ -52,7 +52,7 @@ inline void Superpixel2::SetMeanDP()
 	_CalcMeanDPandColor();
 }
 
-void Superpixel2::_CalcClusters()
+void Superpixel::_CalcClusters()
 {
 	const int rows = dp.height;
 	const int cols = dp.width;
@@ -82,7 +82,7 @@ void Superpixel2::_CalcClusters()
 
 }
 
-void Superpixel2::_CalcNeighs()
+void Superpixel::_CalcNeighs()
 {
 	cv::Mat visited;
 	const int rows = labels.rows;
@@ -118,7 +118,7 @@ void Superpixel2::_CalcNeighs()
 	}
 }
 
-void Superpixel2::_CalcMeanDPandColor()
+void Superpixel::_CalcMeanDPandColor()
 {
 	const int channels = dp.channels;
 	cv::Mat mean_dp(1, channels, CV_32FC1);
@@ -154,7 +154,7 @@ void Superpixel2::_CalcMeanDPandColor()
 	}
 }
 
-cv::Mat Superpixel2::Debug(std::string str)
+cv::Mat Superpixel::Debug(std::string str)
 {
 	cv::Mat img = dp.img.clone();
 
@@ -206,7 +206,7 @@ cv::Mat Superpixel2::Debug(std::string str)
 	//	cv::imwrite(str + "debug_mask2.tif", mask);
 }
 
-void Superpixel2::TestNeighs(const int id, cv::Mat &mask1, cv::Mat &mask2)
+void Superpixel::TestNeighs(const int id, cv::Mat &mask1, cv::Mat &mask2)
 {
 	mask1 = labels == id;
 	mask2 = mask1.clone();

@@ -11,7 +11,7 @@
 
 #include "Descriptor.h"
 #include "defines.h"
-#include "Superpixel2.h"
+#include "Superpixel.h"
 #include "Matcher.h"
 
 
@@ -19,11 +19,11 @@
 int main()
 {
 	Descriptor dp1, dp2;
-	Superpixel2 sp1, sp2;
+	Superpixel sp1, sp2;
 	Matcher matcher;
 
-	cv::Mat img1 = cv::imread("./test2/1799.bmp");
-	cv::Mat img2 = cv::imread("./test2/1811.bmp");
+	cv::Mat img1 = cv::imread("./IMG/test2/1799.bmp");
+	cv::Mat img2 = cv::imread("./IMG/test2/1811.bmp");
 
 	cvtColor(img1, img1, CV_BGR2Lab);
 	cvtColor(img2, img2, CV_BGR2Lab);

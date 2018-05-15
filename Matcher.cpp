@@ -12,7 +12,7 @@ Matcher::~Matcher()
 {
 }
 
-void Matcher::Set(Superpixel2 &sp_from, Superpixel2 &sp_to)
+void Matcher::Set(Superpixel &sp_from, Superpixel &sp_to)
 {
 	this->sp_from = sp_from;
 	this->sp_to = sp_to;
@@ -59,12 +59,12 @@ void Matcher::Check1d(const std::vector<cv::Point2i> &disps,
 	count = 0;
 	if (dim == 0) for (auto i = 0; i < n; i++) vals[i] = disps[i].x;
 	else if (dim == 1) for (auto i = 0; i < n; i++) vals[i] = disps[i].y;
-	else error("dim itsn't valid");
+	else error("dim it is not valid");
 
 	
 
 	//check short displacements
-	if (vals[i])
+	//if (vals[i])
 
 }
 
