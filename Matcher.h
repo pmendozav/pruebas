@@ -20,6 +20,16 @@ private:
 	void RemoveAllOutliers();
 	void RemoveAllOutliersInv();
 
+	bool RemoveOneOutliersStep2(const int &id,
+		const int &disp_max,
+		const int &count_points,
+		const int &max_neighs,
+		const int &max_iters);
+	void RemoveAllOutliersStep2(const int &disp_max = 50,
+		const int &count_points = 1,
+		const int &max_neighs = 6,
+		const int &max_iters = 5);
+
 	void Check1d(const std::vector<cv::Point2i> &disps,
 		std::vector<bool> &flags,
 		const int &dim);
@@ -49,5 +59,7 @@ public:
 	cv::Mat DrawAllMatchesInv(const std::vector<int> &ids);
 	void DrawMatches(const std::set<int> neighs);
 	void DrawMatches(const std::vector < std::pair<int, int>> &matches);
+
+	cv::Mat DrawLine(const int &from, const int &to);
 };
 

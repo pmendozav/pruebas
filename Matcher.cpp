@@ -137,6 +137,70 @@ bool Matcher::CheckOneMatch(const std::vector<cv::Point2i> &disp_neighs,
 	return false;
 }
 
+bool Matcher::RemoveOneOutliersStep2(const int &id_from,
+	const int &disp_max,
+	const int &count_points,
+	const int &max_neighs,
+	const int &max_iters)
+{
+	volatile int iters, count;
+	std::set<int> valid_neighs, neighs;
+
+	if (!(sp_from.sp_info[id_from].valid_disp)) return false;
+
+	int id_to = sp_from.sp_info[id_from].correspondence_id;
+
+	iters = 0;
+	neighs = sp_from.sp_info[id_from].neighs;
+	while (valid_neighs.size() < max_neighs && iters++ < max_iters)
+	{
+		for (const auto &l_from : neighs)
+		{
+			auto l_to = sp_from.sp_info[l_from].correspondence_id;
+
+			//deberia ser en el to.. pero este no lo seteo -.-
+			if (sp_from.sp_info[l_from].valid_disp)
+			//if (sp_to.sp_info[l_to].valid_disp)
+			{
+				valid_neighs.insert(l_to);
+			}
+				
+
+			if (valid_neighs.size() >= max_neighs) break;
+		}
+
+		neighs = FindNeighs(sp_from.sp_info, neighs);
+	}
+
+	count = 0;
+	for (const auto &label : valid_neighs)
+	{
+		const cv::Point2i pt = sp_to.sp_info[label].center - sp_to.sp_info[id_to].center;
+		if (__max(abs(pt.x), abs(pt.y)) < disp_max) count++;
+	}
+
+	return (count >= count_points);
+}
+
+void Matcher::RemoveAllOutliersStep2(const int &disp_max,
+	const int &count_points,
+	const int &max_neighs,
+	const int &max_iters)
+{
+	int count = 0;
+	const int n_superpixels = sp_from.n_superpixels;
+
+	for (int i = 0; i < n_superpixels; i++)
+	{
+		if (!RemoveOneOutliersStep2(i, disp_max, count_points, max_neighs, max_iters))
+			sp_from.sp_info[i].valid_disp = false;
+		else
+			count++;
+	}
+
+	std::cout << count << std::endl;
+}
+
 void Matcher::RemoveAllOutliers()
 {
 	const int n_superpixels = sp_from.n_superpixels;
@@ -299,6 +363,29 @@ void Matcher::FindMatchesInv()
 	}
 }
 
+cv::Mat Matcher::DrawLine(const int &from, const int &to)
+{
+	cv::Mat img_from = sp_from.dp.img.clone();
+	cv::Mat img_to = sp_to.dp.img.clone();
+
+	cvtColor(img_from, img_from, CV_Lab2BGR);
+	cvtColor(img_to, img_to, CV_Lab2BGR);
+
+	cv::Mat img = img_from;
+	cv::hconcat(img, img_to, img);
+
+	cv::Point2i pt1 = sp_from.sp_info[from].center;
+	cv::Point2i pt2 = sp_to.sp_info[to].center;
+	pt2.x += img_from.cols;
+
+	cv::line(img, pt1, pt2, cv::Scalar(rand() % 255, rand() % 255, rand() % 255));
+	cv::Scalar _color(rand() % 255, rand() % 255, rand() % 255);
+	cv::circle(img, pt1, 3, _color);
+	cv::circle(img, pt2, 3, _color);
+
+	return img;
+}
+
 cv::Mat Matcher::DrawAllMatches(const std::vector<int> &ids)
 {
 	cv::Mat img_from = sp_from.dp.img.clone();
@@ -310,6 +397,7 @@ cv::Mat Matcher::DrawAllMatches(const std::vector<int> &ids)
 	cv::Mat img = img_from;
 	cv::hconcat(img, img_to, img);
 
+	int count = 0;
 	for (const auto &id_from : ids)
 	{
 		if (sp_from.sp_info[id_from].valid_disp == false) continue;
@@ -318,10 +406,17 @@ cv::Mat Matcher::DrawAllMatches(const std::vector<int> &ids)
 		cv::Point2i pt2 = sp_to.sp_info[sp_from.sp_info[id_from].correspondence_id].center;
 
 		pt2.x += img_from.cols;
-		//cv::line(img, pt1, pt2, cv::Scalar(rand() % 255, rand() % 255, rand() % 255));
+		cv::line(img, pt1, pt2, cv::Scalar(rand() % 255, rand() % 255, rand() % 255));
 		cv::Scalar _color(rand() % 255, rand() % 255, rand() % 255);
 		cv::circle(img, pt1, 3, _color);
 		cv::circle(img, pt2, 3, _color);
+
+		//cv::imwrite("TMP.tif", img);
+		//cv::Mat tmp = DrawLine(id_from, sp_from.sp_info[id_from].correspondence_id);
+		//std::stringstream buf;
+		//buf << "./results/test3/TMP/" << count++ << ".tif";
+		//cv::imwrite(buf.str(), tmp);
+		//pause();
 	}
 
 	return img;
@@ -448,6 +543,8 @@ void Matcher::Debug(std::string str)
 	RemoveAllOutliers();
 	//RemoveAllOutliersInv();
 
+	RemoveAllOutliersStep2(30, 2);
+
 	timer.toc("total time: ");
 
 	const int n_superpixels = sp_from.n_superpixels;
@@ -458,41 +555,19 @@ void Matcher::Debug(std::string str)
 		if (sp_from.sp_info[i].valid_disp == false) continue;
 
 		cv::Point2i pt1 = sp_from.sp_info[i].center;
-		if (136 < pt1.x && pt1.x < 460 && 105 < pt1.y && pt1.y < 350)
-		{
-			rn.push_back(i);
-		}
-
-		//if (71 < pt1.x && pt1.x < 538 && 70 < pt1.y && pt1.y < 411)
+		//if (136 < pt1.x && pt1.x < 460 && 105 < pt1.y && pt1.y < 350)
 		//{
 		//	rn.push_back(i);
 		//}
+
+		if (71 < pt1.x && pt1.x < 538 && 70 < pt1.y && pt1.y < 411)
+		{
+			rn.push_back(i);
+		}
 	}
 	
 	cv::Mat img1 = DrawAllMatches(rn);
 
-
-	//
-	//const int n_superpixels2 = sp_to.n_superpixels;
-	//std::vector<int> rn2;
-
-	//for (int i = 0; i < n_superpixels2; i++)
-	//{
-	//	if (sp_to.sp_info[i].valid_disp == false) continue;
-
-	//	cv::Point2i pt1 = sp_from.sp_info[sp_to.sp_info[i].correspondence_id].center;
-	//	if (136 < pt1.x && pt1.x < 460 && 105 < pt1.y && pt1.y < 350)
-	//	{
-	//		rn2.push_back(i);
-	//	}
-	//}
-
-	//cv::Mat img2 = DrawAllMatchesInv(rn2);
-
-	cv::imwrite("haber1.tif", img1);
-	//cv::imwrite("haber2.tif", img2);
-
-	//pause();
-
+	cv::imwrite("./results/testX/AllMatches.tif", img1);
 
 }
